@@ -1,0 +1,25 @@
+{
+    "name": "codememory/caching",
+    "license": "MIT",
+    "description": "",
+    "authors": [
+        {
+            "name": "Danil",
+            "email": "kostynd1@gmail.com"
+        }
+    ],
+    "require": {
+        "codememory/fs": "^1.0",
+        "codememory/markup": "^1.0",
+        "codememory/support": "^1.0",
+        "codememory/global-config": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Codememory\\Components\\Caching\\": ""
+        }
+    },
+    "require-dev": {
+        "symfony/var-dumper": "^5.2"
+    }
+}
