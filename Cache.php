@@ -21,6 +21,16 @@ class Cache implements CacheInterface
 {
 
     /**
+     * @var Markup
+     */
+    public Markup $markup;
+
+    /**
+     * @var FileInterface
+     */
+    public FileInterface $fs;
+
+    /**
      * @var string|null
      */
     private ?string $configPathWithExpansion = null;
@@ -31,14 +41,9 @@ class Cache implements CacheInterface
     private ?string $configPathWithoutExpansion = null;
 
     /**
-     * @var Markup
+     * @var History|null
      */
-    public Markup $markup;
-
-    /**
-     * @var FileInterface
-     */
-    public FileInterface $fs;
+    private ?History $history = null;
 
     /**
      * Cache constructor.
@@ -64,7 +69,11 @@ class Cache implements CacheInterface
     public function history(): History
     {
 
-        return new History($this);
+        if(!$this->history instanceof History) {
+            $this->history = new History($this);
+        }
+
+        return $this->history;
 
     }
 
@@ -99,11 +108,13 @@ class Cache implements CacheInterface
             ->open($this->getPathWithExtension($fullPath), 'w+', true)
             ->put(serialize($data));
 
+        $storyAddition = [];
+
         if (null !== $handler) {
-            call_user_func_array($handler, [$this->fs, $fullPath, $data]);
+            call_user_func_array($handler, [$this->fs, $fullPath, $data, &$storyAddition]);
         }
 
-        $this->history()->add($type, $name);
+        $this->history()->add($type, $name, fn () => $storyAddition);
 
         return $this;
 
