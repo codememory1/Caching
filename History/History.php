@@ -52,7 +52,7 @@ class History implements CacheHistoryInterface
 
         $info = [
             'filename'      => $this->fileHash($type, $name),
-            'mainExtension' => $this->cache->getUtils()->getFileExtension()
+            'mainExtension' => $this->cache->utils->getFileExtension()
         ];
 
         $merge = null === $handler ? $info : array_merge($info, call_user_func($handler));
@@ -129,8 +129,8 @@ class History implements CacheHistoryInterface
     public function all(): array
     {
 
-        $path = $this->cache->getUtils()->historyPath();
-        $filename = $this->cache->getUtils()->historyFilename();
+        $path = $this->cache->utils->historyPath();
+        $filename = $this->cache->utils->historyFilename();
         $fullPath = sprintf('%s/%s', $path, $filename);
 
         $this->historyPath = $fullPath;
@@ -157,7 +157,7 @@ class History implements CacheHistoryInterface
     public function hashCode(string $type, string $name): string
     {
 
-        return $this->cache->getUtils()->createHashCode($type, $name);
+        return $this->cache->utils->createHashCode($type, $name);
 
     }
 
@@ -175,7 +175,7 @@ class History implements CacheHistoryInterface
     public function fileHash(string $type, string $name): string
     {
 
-        return $this->cache->getUtils()->createHash($type, $name);
+        return $this->cache->utils->createHash($type, $name);
 
     }
 

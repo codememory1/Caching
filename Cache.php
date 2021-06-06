@@ -31,6 +31,11 @@ class Cache implements CacheInterface
     public FileInterface $fs;
 
     /**
+     * @var Utils
+     */
+    public Utils $utils;
+
+    /**
      * @var string|null
      */
     private ?string $configPathWithExpansion = null;
@@ -61,6 +66,8 @@ class Cache implements CacheInterface
 
         $this->setConfigPath(GlobalConfig::get('caching.fileConfig'));
 
+        $this->utils = $this->setUtils();
+
     }
 
     /**
@@ -69,25 +76,11 @@ class Cache implements CacheInterface
     public function history(): History
     {
 
-        if(!$this->history instanceof History) {
+        if (!$this->history instanceof History) {
             $this->history = new History($this);
         }
 
         return $this->history;
-
-    }
-
-    /**
-     * @return Utils
-     */
-    public function getUtils(): Utils
-    {
-
-        if (null === $this->configPathWithExpansion) {
-            throw new LogicException('Cache configuration path not specified');
-        }
-
-        return new Utils($this->markup, $this->configPathWithoutExpansion);
 
     }
 
@@ -147,8 +140,8 @@ class Cache implements CacheInterface
     public function clear(): bool
     {
 
-        if ($this->fs->exist($this->getUtils()->getPath())) {
-            $this->fs->remove($this->getUtils()->getPath(), true, false);
+        if ($this->fs->exist($this->utils->getPath())) {
+            $this->fs->remove($this->utils->getPath(), true, false);
             $this->history()->clear();
 
             return true;
@@ -217,10 +210,10 @@ class Cache implements CacheInterface
     private function getFullPath(string $type, string $name, bool $withoutFile = false): string
     {
 
-        $path = $this->getUtils()->getPath();
-        $hashCode = $this->getUtils()->createHashCode($type, $name);
-        $hash = $this->getUtils()->createHash($type, $name);
-        $extension = $this->getUtils()->getFileExtension();
+        $path = $this->utils->getPath();
+        $hashCode = $this->utils->createHashCode($type, $name);
+        $hash = $this->utils->createHash($type, $name);
+        $extension = $this->utils->getFileExtension();
 
         $fullPath = sprintf('%s/%s/%s.%s', $path, $hashCode, $hash, $extension);
 
@@ -248,10 +241,24 @@ class Cache implements CacheInterface
     {
 
         if ($mainExtension) {
-            $extension = $this->getUtils()->getFileExtension();
+            $extension = $this->utils->getFileExtension();
         }
 
         return $path . '.' . $extension;
+
+    }
+
+    /**
+     * @return Utils
+     */
+    private function setUtils(): Utils
+    {
+
+        if (null === $this->configPathWithExpansion) {
+            throw new LogicException('Cache configuration path not specified');
+        }
+
+        return new Utils($this->markup, $this->configPathWithoutExpansion);
 
     }
 
