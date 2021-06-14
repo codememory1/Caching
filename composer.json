@@ -10,9 +10,9 @@
     ],
     "require": {
         "codememory/fs": "1.1.2",
-        "codememory/markup": "1.0.1",
         "codememory/support": "1.2.1",
-        "codememory/global-config": "1.1.1"
+        "codememory/global-config": "1.1.1",
+        "codememory/markup": "2.0"
     },
     "autoload": {
         "psr-4": {
