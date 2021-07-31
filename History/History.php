@@ -5,6 +5,7 @@ namespace Codememory\Components\Caching\History;
 use Codememory\Components\Caching\Cache;
 use Codememory\Components\Caching\Interfaces\CacheHistoryInterface;
 use Codememory\Components\Caching\Utils;
+use Codememory\Components\Markup\Markup;
 use Codememory\Support\Arr;
 
 /**
@@ -192,6 +193,7 @@ class History implements CacheHistoryInterface
     {
 
         $this->cache->markup
+            ->setFlags(Markup::CREATE_NON_EXIST)
             ->open($this->historyPath)
             ->change($handler);
 
