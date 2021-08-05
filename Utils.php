@@ -3,6 +3,7 @@
 namespace Codememory\Components\Caching;
 
 use Codememory\Components\Markup\Interfaces\MarkupInterface;
+use Codememory\FileSystem\Interfaces\FileInterface;
 use Codememory\Support\Str;
 
 /**
@@ -16,10 +17,10 @@ class Utils
 
     public const EXPANSION = '.yaml';
 
-    private const DEFAULT_PATH_CACHE = 'storage.cache';
+    private const DEFAULT_PATH_CACHE = 'storage';
     private const DEFAULT_FILE_ENCRYPTION = 'sha256';
     private const HISTORY_FILENAME = 'history';
-    private const HISTORY_PATH = 'storage.cache.history';
+    private const HISTORY_PATH = 'storage.history';
     private const MAIN_FILE_EXTENSION = 'cache';
 
     /**
@@ -30,13 +31,18 @@ class Utils
     /**
      * Utils constructor.
      *
+     * @param FileInterface   $filesystem
      * @param MarkupInterface $markup
      * @param string          $configPath
      */
-    public function __construct(MarkupInterface $markup, string $configPath)
+    public function __construct(FileInterface $filesystem, MarkupInterface $markup, string $configPath)
     {
 
-        $this->config = $markup->open($configPath)->get()['caching'] ?? [];
+        if(!$filesystem->exist(sprintf('%s.yaml', $configPath))) {
+            $this->config = $this->defaultConfig();
+        } else {
+            $this->config = $markup->open($configPath)->get()['caching'] ?? [];
+        }
 
     }
 
@@ -147,6 +153,15 @@ class Utils
     {
 
         return $this->config['history']['filename'] ?? self::HISTORY_FILENAME;
+
+    }
+
+    private function defaultConfig(): array
+    {
+
+        return [
+            'path' => 'storage'
+        ];
 
     }
 

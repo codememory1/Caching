@@ -55,8 +55,6 @@ class Cache implements CacheInterface
      *
      * @param MarkupTypeInterface $markupType
      * @param FileInterface       $fileSystem
-     *
-     * @throws ConfigPathNotExistException
      */
     public function __construct(MarkupTypeInterface $markupType, FileInterface $fileSystem)
     {
@@ -77,7 +75,7 @@ class Cache implements CacheInterface
     {
 
         if (!$this->history instanceof History) {
-            $this->history = new History($this);
+            $this->history = new History($this->fs, $this);
         }
 
         return $this->history;
@@ -186,17 +184,12 @@ class Cache implements CacheInterface
      * @param string $path
      *
      * @return void
-     * @throws ConfigPathNotExistException
      */
     private function setConfigPath(string $path): void
     {
 
         $this->configPathWithExpansion = $path . Utils::EXPANSION;
         $this->configPathWithoutExpansion = $path;
-
-        if (!$this->fs->exist($this->configPathWithExpansion)) {
-            throw new ConfigPathNotExistException($path);
-        }
 
     }
 
@@ -258,7 +251,7 @@ class Cache implements CacheInterface
             throw new LogicException('Cache configuration path not specified');
         }
 
-        return new Utils($this->markup, $this->configPathWithoutExpansion);
+        return new Utils($this->fs, $this->markup, $this->configPathWithoutExpansion);
 
     }
 

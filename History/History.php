@@ -6,7 +6,9 @@ use Codememory\Components\Caching\Cache;
 use Codememory\Components\Caching\Interfaces\CacheHistoryInterface;
 use Codememory\Components\Caching\Utils;
 use Codememory\Components\Markup\Markup;
+use Codememory\FileSystem\Interfaces\FileInterface;
 use Codememory\Support\Arr;
+use Codememory\Support\Str;
 
 /**
  * Class History
@@ -16,6 +18,11 @@ use Codememory\Support\Arr;
  */
 class History implements CacheHistoryInterface
 {
+
+    /**
+     * @var FileInterface
+     */
+    private FileInterface $filesystem;
 
     /**
      * @var Cache
@@ -33,13 +40,13 @@ class History implements CacheHistoryInterface
     private ?string $historyPath = null;
 
     /**
-     * History constructor.
-     *
-     * @param Cache $cache
+     * @param FileInterface $filesystem
+     * @param Cache         $cache
      */
-    public function __construct(Cache $cache)
+    public function __construct(FileInterface $filesystem, Cache $cache)
     {
 
+        $this->filesystem = $filesystem;
         $this->cache = $cache;
         $this->histories = $this->all();
 
@@ -191,6 +198,12 @@ class History implements CacheHistoryInterface
      */
     private function updateHistory(callable $handler): bool
     {
+
+        $dir = $this->cache->utils->historyPath();
+
+        if(!$this->filesystem->exist($dir)) {
+            $this->filesystem->mkdir($dir, 0777, true);
+        }
 
         $this->cache->markup
             ->setFlags(Markup::CREATE_NON_EXIST)
