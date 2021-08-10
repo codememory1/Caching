@@ -181,6 +181,16 @@ class Cache implements CacheInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function getUtils(): Utils
+    {
+
+        return $this->utils;
+
+    }
+
+    /**
      * @param string $path
      *
      * @return void

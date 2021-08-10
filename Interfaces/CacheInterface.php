@@ -2,8 +2,11 @@
 
 namespace Codememory\Components\Caching\Interfaces;
 
+use Codememory\Components\Caching\Utils;
+
 /**
  * Interface CacheInterface
+ *
  * @package Codememory\Components\Caching\Interfaces
  *
  * @author  Codememory
@@ -78,5 +81,14 @@ interface CacheInterface
      * @return bool
      */
     public function remove(string $type, string $name): bool;
+
+    /**
+     * =>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>
+     * Returns the cache configuration utilities
+     * <=<=<=<=<=<=<=<=<=<=<=<=<=<=<=<=<=<=<=<=<=<=
+     *
+     * @return Utils
+     */
+    public function getUtils(): Utils;
 
 }
